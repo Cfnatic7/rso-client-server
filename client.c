@@ -18,14 +18,12 @@ int main()
 	address.sin_addr.s_addr = inet_addr ("127.0.0.1");
 	address.sin_port = htons (9734);
 	len = sizeof (address);
-    struct square_root_query_t square_root_query;
-    struct date_time_query_t date_time_query;
-    struct date_time_response_t date_time_response;
+    struct dto_t dto;
     double number;
-    int is_little_endian = is_little_endian();
+    int small_endianness = is_little_endian();
     int request_number = 0, request_number_copy;
     pid_t pid = getpid();
-    if (is_little_endian) {
+    if (small_endianness) {
         switch_endianness((void *) &number, PID);
     }
 
@@ -46,29 +44,29 @@ int main()
             fflush(stdout);
             scanf("%lf", &number);
             while(getchar() != '\n');
-            square_root_query.type = SQUARE_ROOT_REQUEST_ID;
-            if (is_little_endian) {
+            dto.type = SQUARE_ROOT_REQUEST_ID;
+            if (small_endianness) {
                 switch_endianness((void *) &number, DOUBLE);
             }
-            square_root_query.number = number;
-            square_root_query.rq_id.pid = pid;
-            square_root_query.rq_id.request_number = request_number_copy;
-            my_write(sockfd, (void *) &square_root_query, sizeof (struct square_root_query_t));
-            my_read(sockfd, (void *) &square_root_query, sizeof(struct square_root_query_t));
-            if (is_little_endian) {
-                switch_endianness((void *) &square_root_query.number, DOUBLE);
+            dto.data.number = number;
+            dto.rq_id.pid = pid;
+            dto.rq_id.request_number = request_number_copy;
+            my_write(sockfd, (void *) &dto, sizeof (struct dto_t));
+            my_read(sockfd, (void *) &dto, sizeof(struct dto_t));
+            if (small_endianness) {
+                switch_endianness((void *) &dto.data.number, DOUBLE);
             }
-            printf("square root: %lf\n", square_root_query.number);
+            printf("square root: %lf\n", dto.data.number);
             fflush(stdout);
         }
         else if (decision == 1) {
-            date_time_query.rq_id.request_number = request_number_copy;
-            date_time_query.rq_id.pid = pid;
-            date_time_query.type = TIME_REQUEST_ID;
-            my_write(sockfd, (void *) &date_time_query, sizeof(struct date_time_query_t));
-            my_read(sockfd, (void *) &date_time_response, sizeof(struct date_time_response_t));
-            for (int i = 0; i < date_time_response.len; i++) {
-                putchar(date_time_response.buf[i]);
+            dto.rq_id.request_number = request_number_copy;
+            dto.rq_id.pid = pid;
+            dto.type = TIME_REQUEST_ID;
+            my_write(sockfd, (void *) &dto, sizeof(struct dto_t));
+            my_read(sockfd, (void *) &dto, sizeof(struct dto_t));
+            for (int i = 0; i < dto.data.date_buf.len; i++) {
+                putchar(dto.data.date_buf.buf[i]);
             }
             putchar('\n');
         }
@@ -78,9 +76,8 @@ int main()
         }
         request_number++;
         request_number_copy = request_number;
-        if (is_little_endian) {
+        if (small_endianness) {
             switch_endianness((void *) &request_number_copy, INT);
         }
     }
-	return 0;
 }

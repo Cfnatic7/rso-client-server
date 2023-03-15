@@ -22,23 +22,21 @@ struct rq_id_t {
     uint8_t request_number;
 }__attribute__ ((packed));
 
-struct square_root_query_t {
-    uint8_t type;
-    rq_id_t rq_id;
-    double number;
-}__attribute__ ((packed));
-
-struct date_time_response_t {
-    uint8_t type;
-    rq_id_t rq_id;
+struct date_buf_t {
     uint8_t len;
-    char buf[MAX_LEN]
+    uint8_t buf[MAX_LEN];
 }__attribute__ ((packed));
 
-struct date_time_query_t {
+union data_t {
+    double number;
+    struct date_buf_t date_buf;
+}__attribute__ ((packed));
+
+struct dto_t {
     uint8_t type;
-    rq_id_t rq_id;
-};
+    struct rq_id_t rq_id;
+    union data_t data;
+}__attribute__ ((packed));
 
 uint8_t is_little_endian();
 void switch_endianness(void *ptr, enum  type_t type);
