@@ -77,7 +77,7 @@ main ()
                 dto.rq_id.request_number = request_number_copy;
                 time_t t = time(NULL);
                 struct tm tm = *localtime(&t);
-                sprintf(dto.data.date_buf,
+                sprintf((char *) dto.data.date_buf.buf,
                         "%d-%02d-%02d %02d:%02d:%02d",
                         tm.tm_year + 1900,
                         tm.tm_mon + 1,
