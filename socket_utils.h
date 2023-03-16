@@ -7,19 +7,19 @@
 #include <stdint.h>
 #include <errno.h>
 #include <unistd.h>
-#define SQUARE_ROOT_REQUEST_ID 0x0001
-#define SQUARE_ROOT_RESPONSE_ID 0x1001
-#define TIME_REQUEST_ID 0x0002
-#define TIME_RESPONSE_ID 0x1002
-#define MAX_LEN 255
+#define SQUARE_ROOT_REQUEST_ID (uint8_t)0x0001
+#define SQUARE_ROOT_RESPONSE_ID ((uint8_t) 0x1001)
+#define TIME_REQUEST_ID ((uint8_t) 0x0002)
+#define TIME_RESPONSE_ID ((uint8_t) 0x1002)
+#define MAX_LEN ((uint8_t) 255)
 
 enum type_t {
-    DOUBLE, INT, PID
+    DOUBLE, INT, PID, LONGLONG
 };
 
 struct rq_id_t {
     pid_t pid;
-    uint8_t request_number;
+    long long request_number;
 }__attribute__ ((packed));
 
 struct date_buf_t {
