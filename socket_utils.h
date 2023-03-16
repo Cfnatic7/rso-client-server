@@ -7,6 +7,8 @@
 #include <stdint.h>
 #include <errno.h>
 #include <unistd.h>
+#include <string.h>
+#include <stdio.h>
 #define SQUARE_ROOT_REQUEST_ID (uint8_t)0x0001
 #define SQUARE_ROOT_RESPONSE_ID ((uint8_t) 0x1001)
 #define TIME_REQUEST_ID ((uint8_t) 0x0002)
@@ -42,4 +44,5 @@ uint8_t is_little_endian();
 void switch_endianness(void *ptr, enum  type_t type);
 int my_write(int fd, const void * buf, size_t len);
 int my_read (int fd, const void * buf, size_t len);
+void display_dto(struct dto_t dto);
 #endif //LAB1_SOCKET_UTILS_H

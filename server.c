@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include <math.h>
 #include <time.h>
-#include <string.h>
 #include "socket_utils.h"
 
 int

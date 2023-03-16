@@ -63,3 +63,30 @@ int my_read (int fd, const void * buf, size_t len) {
     return i;
 }
 
+void display_dto(struct dto_t dto) {
+    unsigned char is_little_endianness = is_little_endian();
+    uint8_t type = dto.type;
+    pid_t pid = dto.rq_id.pid;
+    long long request_number = dto.rq_id.request_number;
+    double number = dto.data.number;
+    uint8_t len = dto.data.date_buf.len;
+    uint8_t buffer[MAX_LEN];
+    strncpy((char *) buffer, (const char *) dto.data.date_buf.buf, len);
+    if (is_little_endianness) {
+        switch_endianness((void *) &pid, PID);
+        switch_endianness((void *) &request_number, LONGLONG);
+        switch_endianness((void *) &number, DOUBLE);
+    }
+    printf("type: %d\n", type);
+    printf("pid: %d\n", pid);
+    printf("request number: %lld\n", request_number);
+    if (type == SQUARE_ROOT_RESPONSE_ID || type == SQUARE_ROOT_REQUEST_ID) {
+        printf("number: %f\n", number);
+    }
+    else if (type == TIME_REQUEST_ID) {
+        printf("current date and time: %s\n", buffer);
+        printf("buffer length: %d\n", len);
+    }
+    fflush(stdout);
+}
+
