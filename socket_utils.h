@@ -35,7 +35,7 @@ union data_t {
 }__attribute__ ((packed));
 
 struct dto_t {
-    uint8_t type;
+    uint16_t type;
     struct rq_id_t rq_id;
     union data_t data;
 }__attribute__ ((packed));

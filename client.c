@@ -34,6 +34,11 @@ int main()
         exit (1);
     }
     while(1) {
+        request_number++;
+        request_number_copy = request_number;
+        if (small_endianness) {
+            switch_endianness((void *) &request_number_copy, INT);
+        }
         printf("%s\n", "What do you want to do: 0 - get square root, 1 - get current date, 2 - quit\n");
         fflush(stdout);
         int decision;
@@ -52,12 +57,10 @@ int main()
             dto.data.number = number;
             dto.rq_id.pid = pid;
             dto.rq_id.request_number = request_number_copy;
+            display_dto(dto);
             my_write(sockfd, (void *) &dto, sizeof (struct dto_t));
             my_read(sockfd, (void *) &dto, sizeof(struct dto_t));
-            if (small_endianness) {
-                switch_endianness((void *) &dto.data.number, DOUBLE);
-            }
-            printf("square root: %lf\n", dto.data.number);
+            display_dto(dto);
             fflush(stdout);
         }
         else if (decision == 1) {
@@ -67,21 +70,14 @@ int main()
             if (small_endianness) {
                 switch_endianness((void *) &dto.type, UINT16);
             }
+            display_dto(dto);
             my_write(sockfd, (void *) &dto, sizeof(struct dto_t));
             my_read(sockfd, (void *) &dto, sizeof(struct dto_t));
-            for (int i = 0; i < dto.data.date_buf.len; i++) {
-                putchar(dto.data.date_buf.buf[i]);
-            }
-            putchar('\n');
+            display_dto(dto);
         }
         else if (decision == 2) {
             close (sockfd);
             exit (0);
-        }
-        request_number++;
-        request_number_copy = request_number;
-        if (small_endianness) {
-            switch_endianness((void *) &request_number_copy, INT);
         }
     }
 }
