@@ -53,6 +53,7 @@ main ()
                 switch_endianness((void *) &request_number_copy, LONGLONG);
             }
             read (client_sockfd, &dto, sizeof(struct dto_t));
+            display_dto(dto);
             if (dto.type == SQUARE_ROOT_REQUEST_ID) {
                 dto.type = SQUARE_ROOT_RESPONSE_ID;
                 dto.rq_id.pid = pid;
@@ -84,6 +85,7 @@ main ()
                         tm.tm_sec);
                 dto.data.date_buf.len = strlen((char *) dto.data.date_buf.buf);
             }
+            display_dto(dto);
             write (client_sockfd, &dto, sizeof(struct dto_t));
             close (client_sockfd);
             exit (0);

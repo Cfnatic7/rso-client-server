@@ -90,6 +90,7 @@ void display_dto(struct dto_t dto) {
         printf("current date and time: %s\n", buffer);
         printf("buffer length: %d\n", len);
     }
+    putchar('\n');
     fflush(stdout);
 }
 
