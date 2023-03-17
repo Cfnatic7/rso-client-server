@@ -45,8 +45,8 @@ main ()
         request_number++;
         request_number_copy = request_number;
 
-        if (fork () == 0)
-        {
+//        if (fork () == 0)
+//        {
             pid_t pid = getpid();
             read (client_sockfd, &dto, sizeof(struct dto_t));
             if (is_little_endianness) {
@@ -86,10 +86,10 @@ main ()
             write (client_sockfd, &dto, sizeof(struct dto_t));
             close (client_sockfd);
             exit (0);
-        }
-        else
-        {
-            close (client_sockfd);
-        }
+//        }
+//        else
+//        {
+//            close (client_sockfd);
+//        }
     }
 }
