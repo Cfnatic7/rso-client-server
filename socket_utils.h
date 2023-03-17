@@ -9,14 +9,14 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>
-#define SQUARE_ROOT_REQUEST_ID (uint8_t)0x0001
-#define SQUARE_ROOT_RESPONSE_ID ((uint8_t) 0x1001)
-#define TIME_REQUEST_ID ((uint8_t) 0x0002)
-#define TIME_RESPONSE_ID ((uint8_t) 0x1002)
+#define SQUARE_ROOT_REQUEST_ID (uint16_t)0x0001
+#define SQUARE_ROOT_RESPONSE_ID ((uint16_t) 0x1001)
+#define TIME_REQUEST_ID ((uint16_t) 0x0002)
+#define TIME_RESPONSE_ID ((uint16_t) 0x1002)
 #define MAX_LEN ((uint8_t) 255)
 
 enum type_t {
-    DOUBLE, INT, PID, LONGLONG
+    DOUBLE, INT, PID, LONGLONG, UINT16
 };
 
 struct rq_id_t {

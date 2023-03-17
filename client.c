@@ -47,6 +47,7 @@ int main()
             dto.type = SQUARE_ROOT_REQUEST_ID;
             if (small_endianness) {
                 switch_endianness((void *) &number, DOUBLE);
+                switch_endianness((void *) &dto.type, UINT16);
             }
             dto.data.number = number;
             dto.rq_id.pid = pid;
@@ -63,6 +64,9 @@ int main()
             dto.rq_id.request_number = request_number_copy;
             dto.rq_id.pid = pid;
             dto.type = TIME_REQUEST_ID;
+            if (small_endianness) {
+                switch_endianness((void *) &dto.type, UINT16);
+            }
             my_write(sockfd, (void *) &dto, sizeof(struct dto_t));
             my_read(sockfd, (void *) &dto, sizeof(struct dto_t));
             for (int i = 0; i < dto.data.date_buf.len; i++) {

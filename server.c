@@ -25,8 +25,6 @@ main ()
     server_len = sizeof (server_address);
     bind (server_sockfd, (struct sockaddr *) &server_address, server_len);
 
-    /*  Create a connection queue, ignore child exit details and wait for clients.  */
-
     listen (server_sockfd, 5);
 
     signal (SIGCHLD, SIG_IGN);

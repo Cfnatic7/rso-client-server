@@ -24,6 +24,9 @@ void switch_endianness(void *ptr, enum  type_t type) {
     else if (type == LONGLONG) {
         size = sizeof(long long);
     }
+    else if (type == UINT16) {
+        size = sizeof(uint16_t);
+    }
     uint8_t *contents = (uint8_t *) ptr;
     for (int i = 0, j = size - 1; i < j; i++, j--) {
         uint8_t save = contents[j];
