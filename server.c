@@ -48,26 +48,19 @@ main ()
         if (fork () == 0)
         {
             pid_t pid = getpid();
-            if (is_little_endianness) {
-                switch_endianness((void *) &pid, PID);
-                switch_endianness((void *) &request_number_copy, LONGLONG);
-            }
             read (client_sockfd, &dto, sizeof(struct dto_t));
-            display_dto(dto);
+            if (is_little_endianness) {
+                switch_dto_endianness(&dto);
+            }
             if (dto.type == SQUARE_ROOT_REQUEST_ID) {
+                printf("Entered square root handling\n");
                 dto.type = SQUARE_ROOT_RESPONSE_ID;
                 dto.rq_id.pid = pid;
                 dto.rq_id.request_number = request_number_copy;
                 double number = dto.data.number;
-                if (is_little_endianness) {
-                    switch_endianness((void *) &number, DOUBLE);
-                }
                 double square_root = sqrt(number);
-                if (is_little_endianness) {
-                    switch_endianness((void *) &square_root, DOUBLE);
-                }
                 dto.data.number = square_root;
-
+                printf("square root: %f\n", dto.data.number);
             }
             else if (dto.type == TIME_REQUEST_ID) {
                 dto.type = TIME_RESPONSE_ID;
@@ -85,7 +78,11 @@ main ()
                         tm.tm_sec);
                 dto.data.date_buf.len = strlen((char *) dto.data.date_buf.buf);
             }
-            display_dto(dto);
+            if (is_little_endianness) {
+                switch_dto_endianness(&dto);
+            }
+            printf("pre send\n");
+            display_dto_from_big_endian(dto);
             write (client_sockfd, &dto, sizeof(struct dto_t));
             close (client_sockfd);
             exit (0);

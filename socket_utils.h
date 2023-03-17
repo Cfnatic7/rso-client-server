@@ -44,5 +44,6 @@ uint8_t is_little_endian();
 void switch_endianness(void *ptr, enum  type_t type);
 int my_write(int fd, const void * buf, size_t len);
 int my_read (int fd, const void * buf, size_t len);
-void display_dto(struct dto_t dto);
+void display_dto_from_big_endian(struct dto_t dto);
+void switch_dto_endianness(struct dto_t *dto);
 #endif //LAB1_SOCKET_UTILS_H

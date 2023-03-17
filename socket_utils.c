@@ -29,9 +29,9 @@ void switch_endianness(void *ptr, enum  type_t type) {
     }
     uint8_t *contents = (uint8_t *) ptr;
     for (int i = 0, j = size - 1; i < j; i++, j--) {
-        uint8_t save = contents[j];
-        contents[j] = contents[i];
-        contents[i] = save;
+        uint8_t save = contents[i];
+        contents[i] = contents[j];
+        contents[j] = save;
     }
 }
 
@@ -44,10 +44,14 @@ int my_write(int fd, const void * buf, size_t len) {
             if (errno == EINTR) {
                 continue;
             }
-            else i = -1;
+            else {
+                printf("breaking my write");
+                break;
+            }
         }
         i++;
     }
+    printf("Written %d bytes\n", i);
     return i;
 }
 int my_read (int fd, const void * buf, size_t len) {
@@ -55,42 +59,46 @@ int my_read (int fd, const void * buf, size_t len) {
     uint8_t * buffer = (uint8_t *) buf;
     while(i < len) {
         int retval = read(fd, buffer + i, 1);
+        fflush(stdout);
         if (retval == 0) {
             if (errno == EINTR) {
                 continue;
             }
-            else i = -1;
+            else {
+                printf("breaking my read");
+                break;
+            }
         }
         i++;
     }
+    printf("Read %d bytes\n", i);
+    fflush(stdout);
     return i;
 }
 
-void display_dto(struct dto_t dto) {
+void display_dto_from_big_endian(struct dto_t dto) {
     unsigned char is_little_endianness = is_little_endian();
-    uint8_t type = dto.type;
-    pid_t pid = dto.rq_id.pid;
-    long long request_number = dto.rq_id.request_number;
-    double number = dto.data.number;
-    uint8_t len = dto.data.date_buf.len;
-    uint8_t buffer[MAX_LEN];
-    strncpy((char *) buffer, (const char *) dto.data.date_buf.buf, len);
     if (is_little_endianness) {
-        switch_endianness((void *) &pid, PID);
-        switch_endianness((void *) &request_number, LONGLONG);
-        switch_endianness((void *) &number, DOUBLE);
+        switch_dto_endianness(&dto);
     }
-    printf("type: %d\n", type);
-    printf("pid: %d\n", pid);
-    printf("request number: %lld\n", request_number);
-    if (type == SQUARE_ROOT_RESPONSE_ID || type == SQUARE_ROOT_REQUEST_ID) {
-        printf("number: %f\n", number);
+    printf("type: %d\n", dto.type);
+    printf("pid: %d\n", dto.rq_id.pid);
+    printf("request number: %lld\n", dto.rq_id.request_number);
+    if (dto.type == SQUARE_ROOT_RESPONSE_ID || dto.type == SQUARE_ROOT_REQUEST_ID) {
+        printf("number: %f\n", dto.data.number);
     }
-    else if (type == TIME_REQUEST_ID) {
-        printf("current date and time: %s\n", buffer);
-        printf("buffer length: %d\n", len);
+    else if (dto.type == TIME_REQUEST_ID) {
+        printf("current date and time: %s\n", dto.data.date_buf.buf);
+        printf("buffer length: %d\n", dto.data.date_buf.len);
     }
     putchar('\n');
     fflush(stdout);
+}
+
+void switch_dto_endianness(struct dto_t *dto) {
+    switch_endianness((void *) &dto->type, UINT16);
+    switch_endianness((void *) &dto->rq_id.request_number, LONGLONG);
+    switch_endianness((void *) &dto->rq_id.pid, PID);
+    switch_endianness((void *) &dto->data.number, DOUBLE);
 }
 
